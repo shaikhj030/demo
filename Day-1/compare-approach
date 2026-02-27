@@ -1,0 +1,25 @@
+
+Key Takeaway
+Declarative (Terraform) → You say what you want, Terraform ensures it happens.
+
+Imperative (Scripts) → You say how to do it, step by step, which is more error‑prone and less scalable.
+
+┌───────────────────────────────┬────────────────────────────────┐
+│       Declarative (Terraform) │       Imperative (Scripts)     │
+├───────────────────────────────┼────────────────────────────────┤
+│ Define the desired end state  │ Define step‑by‑step actions    │
+│ ("I want 3 servers + LB")     │ ("Create server → configure →  │
+│                               │ install load balancer → link") │
+├───────────────────────────────┼────────────────────────────────┤
+│ Terraform figures out how to  │ Engineer must specify every    │
+│ reach that state automatically│ command in exact order         │
+├───────────────────────────────┼────────────────────────────────┤
+│ Idempotent: repeat runs give  │ Risk of drift: repeated runs   │
+│ consistent results            │ may cause errors or duplicates │
+├───────────────────────────────┼────────────────────────────────┤
+│ Version‑controlled, reusable  │ Harder to track changes, often │
+│ configs stored in Git         │ scattered across scripts       │
+├───────────────────────────────┼────────────────────────────────┤
+│ Cloud‑agnostic: works across  │ Usually tied to one platform   │
+│ AWS, Azure, GCP, etc.         │ or environment                 │
+└───────────────────────────────┴────────────────────────────────┘
