@@ -1,4 +1,5 @@
-Terraform notes
+How Terraform changed software engineering forever
+
 Stop clicking. You think Netflix or Uber spins up 5,000 servers by clicking create instance 5,000 times? No. 
 They define a blueprint. 
 They run a single command and an entire data center appears out of thin air. 
@@ -152,3 +153,8 @@ If you want to begin your journey in becoming a 10x engineer, I highly recommend
 And I believe they are the best project-based coding platform out there. 
 
 Please subscribe if you enjoyed and happy coding.
+
+
+please refer link for more understand
+How Terraform changed software engineering forever
+https://www.youtube.com/watch?v=AYpGVdZFBHQ&t=16s
