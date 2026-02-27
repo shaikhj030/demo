@@ -25,3 +25,44 @@ Prevents multiple engineers from applying changes simultaneously.
 DynamoDB table is used to lock the state file during operations.
 
 Guarantees consistency and avoids conflicting updates.
+
+
+Local State Workflow
+--------------------
+Terraform CLI
+     │
+     ▼
+[ Local State File on Developer Machine ]
+     │
+     ├─ Risks:
+     │    • Sensitive data exposure
+     │    • Inconsistency across team members
+     │    • Manual sharing/versioning
+     ▼
+Infrastructure changes applied directly
+
+
+Remote State Workflow (S3 + DynamoDB)
+-------------------------------------
+Terraform CLI
+     │
+     ▼
+[ Remote Backend: AWS S3 Bucket ]
+     │
+     ├─ Stores state securely and centrally
+     │
+     ▼
+[ DynamoDB Table ]
+     │
+     ├─ Provides state locking
+     │    • Prevents simultaneous conflicting updates
+     │    • Ensures only one engineer can apply changes at a time
+     ▼
+Infrastructure changes applied consistently across team
+
+Key Difference
+Local state → Simple but risky (security + collaboration issues).
+
+Remote state with locking → Secure, centralized, and safe for teams working together.
+
+This is exactly what the video emphasizes: Terraform’s state is powerful but must be managed properly, and remote backends with locking are the best practice in real-world DevOps.
