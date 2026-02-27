@@ -1,0 +1,20 @@
+Mutable Infrastructure (Patch-in-place)
+---------------------------------------
+[ Existing Server ] ---> [ Apply Patch/Update ] ---> [ Same Server, Modified ]
+         │
+         ├─ Risk: Configuration drift over time
+         ├─ Rollback: Complex (undo patches manually)
+         └─ Consistency: Hard to guarantee across environments
+
+
+Immutable Infrastructure (Rebuild & Replace)
+--------------------------------------------
+[ Existing Server ] ---> [ Build New Image ] ---> [ Deploy New Server ]
+         │
+         ├─ Old server is discarded, replaced entirely
+         ├─ Rollback: Simple (redeploy previous image)
+         └─ Consistency: Guaranteed, every server identical
+Key Difference
+Mutable: You change what’s already running. Over time, servers diverge and become inconsistent.
+
+Immutable: You replace with a fresh copy. Every deployment is clean, reproducible, and easier to roll back.
