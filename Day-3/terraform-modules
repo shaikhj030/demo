@@ -1,0 +1,36 @@
+Monolithic Project
+------------------
+[ main.tf ]
+   ├─ EC2 resources
+   ├─ VPC resources
+   ├─ S3 resources
+   ├─ EKS cluster
+   └─ All tangled together
+
+Problems:
+- Hard to debug
+- No clear ownership
+- Difficult to scale
+- Risk of errors when multiple people edit
+
+
+Modular Project
+---------------
+[ Root Configuration ]
+   ├─ module "ec2_instance"
+   ├─ module "vpc"
+   ├─ module "s3"
+   └─ module "eks"
+
+Each module:
+   • Has its own main.tf, variables.tf, outputs.tf
+   • Can be reused across projects
+   • Easier to maintain and test
+   • Clear ownership and accountability
+
+Key Takeaway
+Monolithic = one giant file, messy and hard to manage.
+
+Modular = clean, reusable building blocks, just like microservices in software engineering.
+
+This is exactly what the video emphasizes: breaking infrastructure into modules makes Terraform projects scalable, maintainable, and collaborative.
