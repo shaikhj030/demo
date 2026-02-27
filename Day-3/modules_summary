@@ -1,0 +1,59 @@
+Problem with Monolithic Projects:
+
+Putting all resources (EC2, VPC, S3, EKS, etc.) into one main.tf file creates complexity.
+
+Hard to debug, maintain, assign ownership, and test.
+
+Similar to monolithic applications in software engineering.
+
+Solution – Modules:
+
+What are Modules?
+
+A module is a container for multiple resources that work together.
+
+It allows you to group related infrastructure into reusable components.
+
+Why Use Modules?
+
+Avoids duplication of code.
+
+Makes infrastructure easier to maintain and scale.
+
+Promotes consistency across environments (dev, test, prod).
+
+Break Terraform code into smaller, reusable units.
+
+Each module handles one resource or logical group (e.g., EC2 instance).
+
+Encourages modularity, reusability, easier collaboration, and simplified maintenance.
+
+Advantages of Modules:
+
+Ownership and accountability for specific components.
+
+Reuse across multiple teams/projects.
+
+Easier testing, abstraction, scalability, and security.
+
+Demonstration:
+
+Starts with a simple EC2 instance project using variables, outputs, and terraform.tfvars.
+
+Converts it into a module (modules/ec2_instance).
+
+Shows how other teams can consume the module by referencing it in their own main.tf.
+
+Explains how modules can be stored in private GitHub repositories or used from the public Terraform Registry.
+
+Best Practices:
+
+Keep modules small and focused.
+
+Use meaningful variable names.
+
+Store commonly used modules in a private or public registry for collaboration.
+
+Key Takeaway
+Terraform modules make infrastructure code modular, reusable, and maintainable, solving the same problems that microservices solved for monolithic applications
+
