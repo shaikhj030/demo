@@ -1,0 +1,154 @@
+Terraform notes
+Stop clicking. You think Netflix or Uber spins up 5,000 servers by clicking create instance 5,000 times? No. 
+They define a blueprint. 
+They run a single command and an entire data center appears out of thin air. 
+That is why Terraform is everywhere. 
+It is the only way to survive at scale. 
+It turns your infrastructure into software. 
+If you are still building servers by hand, you are building a house of cards. 
+Stop being a server mechanic and become a cloud architect. 
+At its core, Terraform is an open-source infrastructure as code tool created by Hashacorp. 
+It allows you to define, provision, and manage cloud infrastructure using human readable configuration files. 
+Think of it as a blueprint for your data center. 
+Instead of manually clicking buttons in the AWS, Azure or Google Cloud consoles, which is slow and hard to replicate, you write a
+text file describing your desired end state. 
+Terraform then reads that file and handles the complex logic to make it a reality. 
+A key distinction of Terraform is that it is declarative, not imperative. 
+Imperative or scripting would involve telling the computer how to do something. 
+For example, log in, click create server, wait 5 seconds, and then install update. 
+In Terraform, which is declarative, you tell the computer what you want. 
+For example, I want three servers with a load balancer like EngineX. 
+Terraform figures out the how and the order of operations for you. 
+So, why use Terraform? Before Terraform, managing infrastructure was manual via click ops and very errorprone.
+If you needed 10 servers, you created them one by one. 
+If a configuration drifted, for example, a junior engineer manually opened a firewall port for testing and forgot to close it, it was nearly
+impossible to track. 
+Terraform solves these specific engineering challenges.
+First, item potency. You can run the same Terraform code multiple times and the result remains the same. 
+If the server already exists, Terraform won't create a second one. 
+It simply verifies the existing one matches your code.
+Second, infrastructure as code. 
+Your infrastructure is stored in Git. 
+This enables version control, meaning you can roll back to previous infrastructure versions if a deployment breaks. It also
+enables code reviews. 
+Peers can review infrastructure changes via pull requests before they go live. 
+And finally, audit trails. 
+You know exactly who changed what and when. 
+And third, it is platform agnostic. 
+While you write specific code for AWS or Azure, Terraform provides a unified workflow for all of them. 
+You can even manage multiple clouds. 
+For example, AWS for compute, Cloudflare for DNS in a single configuration. 
+But how does it work? What is the core workflow? Terraform follows a strict life cycle that ensures safety and predictability.
+Starting with Terraform init, this is the initialization step. 
+Terraform scans your code, identifies which providers you are using, for example, AWS, and downloads the necessary plug-in binaries
+to a hidden Terraform folder. 
+This is followed by Terraform plan. 
+This is a safety check. 
+Terraform compares your code against your current live infrastructure and creates an execution plan. 
+It shows you a diff, green for additions, red for deletions of exactly what will happen. 
+This is a readonly operation. 
+Next is Terraform apply. 
+This is the execution. 
+If the plan looks correct, you confirm it. 
+Terraform makes the API calls to the cloud provider to build or modify the infrastructure to match your code. 
+And last but not least, Terraform destroy, which is the cleanup. 
+When an environment like a testing sandbox is no longer needed, this command reads your state file and removes all associated resources
+efficiently. 
+But how does Terraform actually work under the hood? To understand why Terraform is so reliable, you need to look at its internal
+architecture.
+It isn't just one big program. It's a modular system. The first is the Terraform core or the brain. 
+This is the static binary you download from Hashacorp.
+It is the engine that drives everything. 
+But remarkably, it knows absolutely nothing about AWS, Azure or Google Cloud. 
+Its job is strictly logical. 
+It reads your config by parsing your TF files and validating the syntax. 
+It also manages state by maintaining the terraform.tf state file which acts as its map of reality. 
+By reality, we mean the actual live infrastructure currently running in the cloud. 
+The core uses this file to link your abstract code like resource web server to the specific real world ID like AWS ID I-01 33 4 5 6 7 8 9. If you
+delete this file, Terraform loses its memory and forgets that your servers even exist, often requiring manual cleanup. It also calculates the resource
+dependency graph, a directed asyclic graph. 
+It figures out that the database needs the subnet which needs the VPC.
+And second is the providers or plugins.
+These are separate binaries or executable files that the core downloads during Terraform init. 
+The AWS provider, for example, is a Go binary that knows exactly how to make API calls to AWS.
+Since the core doesn't know AWS or Azure or Google Cloud, it uses plugins called providers. 
+These are small binaries that the core talks to via RPC. 
+The core says, I need a resource of type AWS instance created. 
+The AWS provider says, okay, understood. I will translate that request into a run instances API call and send it to the AWS endpoint. 
+This separation is why Terraform is so powerful. 
+Hashorp updates the core to be smarter while AWS updates their provider to support new features and they work together seamlessly. 
+When you run Terraform plan, Terraform builds a mathematical representation, a directed asyclic graph of all your resources. 
+It looks at your code and sees that the EC2 instance refers to the subnet ID.
+Therefore, it knows the subnet must exist before the EC2 instance. 
+It walks this graph to determine the exact order of operations. 
+Because it has this graph, Terraform can identify resources that don't depend on each other and create them in parallel. 
+For example, creating a database and a load balancer at the same time, which speeds up your deployment significantly. 
+In a modern production environment, Terraform is just one piece of a much larger puzzle involving cloud architecture and AIdriven automation. This is where
+CodeCloud becomes your secret weapon.
+They've moved beyond just DevOps to help you master the new skill stack. 
+DevOps, cloud, and AI all in one place. What makes CodeCloud different is their lab's first philosophy.
+Instead of just watching guided videos, you're dropped into real browser-based environments where you can deploy multicloud infrastructure, manage Kubernetes clusters, and even experiment with AI
+assisted workflows.
+They've recently integrated a personalized AI tutor right into the labs. 
+So, if your Terraform plan fails or a container won't start, you get realtime intelligent guidance to help you troubleshoot just like a senior
+engineer looking over your shoulder.
+Whether you're following their 100 days of DevOps challenge, or diving into their new AI engineering tracks, you're building a portfolio of realworld
+projects that actually mean something to recruiters. If you're ready to stop watching and start building, use the link in the description to check out
+their latest learning paths. 
+Thank you to CodeCloud for sponsoring this video.
+Now, let's get back to Terraform. To master Terraform, you must understand the components that power it. 
+First, the providers. Terraform is just the core engine. 
+It doesn't know how to talk to the cloud by default. 
+It uses providers or plugins to translate Terraform syntax into specific API calls. Note that
+providers are not just for clouds. 
+There are providers for Kubernetes, Data Dog, GitHub, and even ordering Domino's Pizza. The second are resources. 
+A resource is the most important element.
+It describes a specific infrastructure object. 
+It uses syntax like resource followed by the type and the local name. 
+For example, AWS S3 bucket could be the type and it could be named my data bucket which is the local name used to reference it elsewhere in code. Next is
+state which is the brain of Terraform.
+It's the most critical concept.
+Terraform keeps track of the infrastructure it manages in a file called terraform.tfstate.
+It maps your code for example resource A to the real world ID. 
+It caches resource attributes so Terraform doesn't have to query the cloud API for every single detail every time. 
+In prod, you never store this file on your laptop. 
+You store it remotely, for example, inside an AWS S3 bucket, so your entire team shares the same view of reality. 
+This also enables state locking, which prevents two people from modifying infra at the exact same time. 
+And finally, modules. 
+As you scale, putting everything in one single file becomes messy. 
+Modules allow you to group resources together into reusable components. 
+You can write a web server module once and reuse it for your staging, QA, and prod environments just by passing different parameters. Here is
+a more realistic example that uses variables to avoid hard coding and outputs to return useful data. 
+How about Terraform versus tools like Anible? It's common to be confused by the landscape of tools, so here's a breakdown.
+Terraform is for provisioning. It's best at creating the skeleton of your infra.
+It creates the VPCs, subnetss, load balancers, and bare servers. 
+And it follows an immutable model. 
+If a server is broken, destroy it and build a new one. 
+Anible, Chef, Puppet, etc. are used for configuration management. It's best  at fleshing out the servers. 
+Once the server exists, these tools install software, patch kernels, and manage user accounts. 
+They often follow a mutable model, which means updating the existing server in place. Most modern companies use Terraform to spin up the infra
+including Kubernetes clusters and then use tools like Helm or Ansible to manage the applications running inside. 
+But you might be wondering why Terraform why not just use AWS cloud formation or anible. 
+Terraform didn't just get lucky. It solved three specific problems better than anyone else. 
+The first is the cloud agnostic advantage. Tools like AWS cloud for Azure ARM templates are powerful but they lock you into one vendor. 
+If you learn cloud form, you only know AWS.
+Terraform is universal. You learn one syntax, HCL, and you use it to manage AWS, Azure, Google Cloud, Kubernetes, Data Dog, and even GitHub. It allows you
+to build a multicloud strategy without learning five different languages. 
+The second is the immutable mindset versus configuration management. 
+Tools like Ansible, Chef, and Puppet were designed for a different era. 
+They focus on changing existing servers, i.e. mutable infrastructure, installing updates, patching configs, and tweaking settings. 
+Terraform focuses on replacing servers, i.e. immutable infrastructure. 
+In the cloud era, if a server acts up, you don't spend hours fixing it. You shoot it and you spin up a new perfect copy. 
+Terraform is built native to this disposable mindset. And the third is the massive ecosystem, the provider model.
+Because Terraform is open- source and plug-in based, the community exploded. 
+Need to manage a firewall? There's a provider for that. Need to configure a Spotify playlist? There's also a provider for that. This pluggable
+architecture meant that Terraform grew faster than any single company could build it. It became the standard API for the entire internet. 
+To wrap up, Terraform is the bridge between your  code and the cloud. It replaces the fragile chaos of manual click ops with a single version controlled blueprint. It
+is declarative. You define the what, the end goal, and Terraform figures out the how or the API calls. It is stateaware.
+It manages the terraform.tf state file to track the reality of your infra ensuring that what is running in the cloud matches exactly what is written in
+your code and it is universal.
+Whether you are managing AWS, Azure or Kubernetes, the workflow is identical.  
+If you want to begin your journey in becoming a 10x engineer, I highly recommend you check out Code Crafters down below. 
+And I believe they are the best project-based coding platform out there. 
+
+Please subscribe if you enjoyed and happy coding.
