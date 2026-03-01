@@ -1,0 +1,60 @@
+Important Warnings
+Workspace Deletion vs. Resource Destruction: Running terraform workspace delete <name> does not destroy the resources; it only deletes the state file. The resources will become "dangling" and must be deleted manually in your cloud console.
+State Locking: If using a remote backend with state locking, ensure no other processes are running in those workspaces, or the script will fail.
+
+deleting resource 
+
+for ws in $(terraform workspace list | grep -v '*' | grep -v default | tr -d ' '); do
+  echo "Switching to workspace: $ws"
+  terraform workspace select "$ws"
+ echo "yes" |  terraform destroy
+done
+
+
+
+./case_workspace.sh <workspace> <plan|apply|destroy>
+set -e
+
+WORKSPACE=$1
+ACTION=$2
+
+# Validate inputs
+if [[ -z "$WORKSPACE" || -z "$ACTION" ]]; then
+  echo "Usage: $0 <workspace_name> <apply|destroy|plan>"
+  exit 1
+fi
+
+# Ensure Terraform is initialized
+terraform init -input=false
+
+# Workspace "Select or Create" logic
+echo "--- Targeting Workspace: $WORKSPACE ---"
+terraform workspace select "$WORKSPACE" 2>/dev/null || terraform workspace new "$WORKSPACE"
+
+# Execute logic based on action
+case "$ACTION" in
+  plan)
+    echo "Generating plan for $WORKSPACE..."
+    terraform plan -var-file="terraform.tfstate.d/${WORKSPACE}/${WORKSPACE}.tfvars"
+    ;;
+
+  apply)
+    echo "Applying infrastructure changes for $WORKSPACE..."
+    terraform apply -var-file="terraform.tfstate.d/${WORKSPACE}/${WORKSPACE}.tfvars" -auto-approve
+    ;;
+
+  destroy)
+    echo "WARNING: Destroying all resources in $WORKSPACE..."
+    terraform destroy -var-file="terraform.tfstate.d/${WORKSPACE}/${WORKSPACE}.tfvars" -auto-approve
+    
+    # Cleanup: Switch back to default to allow workspace deletion
+    terraform workspace select default
+   # terraform workspace delete "$WORKSPACE"
+    echo "Workspace $WORKSPACE has been removed."
+    ;;
+
+  *)
+    echo "Error: Invalid action '$ACTION'. Use: plan, apply, or destroy."
+    exit 1
+    ;;
+esac
