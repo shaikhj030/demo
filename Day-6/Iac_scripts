@@ -58,3 +58,24 @@ case "$ACTION" in
     exit 1
     ;;
 esac
+
+
+3. Key Best Practices for Scripts
+
+Variable Files: Name your .tfvars files after your workspaces (e.g., dev.tfvars, prod.tfvars) so the script can dynamically load them using -var-file="envs/${WORKSPACE}.tfvars".
+
+Non-Interactive Mode: Use the -input=false and -auto-approve flags to ensure the script doesn't hang waiting for user confirmation.
+
+Safety Guards: In your Terraform configuration, use a null_resource or lifecycle block to prevent accidental runs in the default workspace.
+Remote State: Always use a remote backend (like S3 or HCP Terraform) for automated scripts to ensure state is shared and locked during runs.
+Key Logic Improvements:
+
+The plan Case: Added a Terraform Plan option, which is standard practice before running an apply in automation.
+
+Default Handling: The *) case catches typos and prevents the script from running with invalid commands.
+
+Automatic Deletion: In the destroy case, it automatically performs the Workspace Delete after the resources are gone, which keeps your environment list clean.
+
+Silence Errors: Used 2>/dev/null on the select command so you don't see a "workspace not found" error message when the script creates a new one for the first time.
+
+Pro-Tip: If you are running this in a CI/CD environment like Jenkins or GitLab CI, ensure your envs/ directory is checked into your repository.
