@@ -1,0 +1,141 @@
+Introduction to Secrets Management
+
+Importance of handling sensitive data in DevOps (passwords, tokens, certificates).
+
+Overview of HashiCorp Vault as a popular tool for secret management.
+
+Setting up Vault on AWS
+
+Launching an Ubuntu EC2 instance.
+
+Installing HashiCorp Vault via package manager.
+
+Starting Vault in development mode for demonstration.
+
+Vault User Interface & Secret Engines
+
+Accessing Vault UI with root token.
+
+Explanation of secret engines (KV, Kubernetes, AWS, etc.).
+
+Creating a basic key-value secret (username/password).
+
+Access & Policies
+
+Comparison of Vault roles/policies with AWS IAM.
+
+Enabling AppRole authentication.
+
+Creating policies and roles via CLI.
+
+Generating role ID and secret ID for Terraform integration.
+
+Terraform Integration
+
+Writing Terraform configuration with Vault provider.
+
+Authenticating using role ID and secret ID.
+
+Reading secrets from Vault using Terraform data sources.
+
+Practical Demo
+
+Using a stored secret as a tag on an AWS EC2 instance.
+
+Debugging authentication errors and regenerating secret IDs.
+
+Verifying that the EC2 instance is successfully tagged with the Vault secret.
+
+Wrap-up
+
+Demonstration of how secrets can also be applied to S3 buckets or other AWS resources.
+
+Emphasis on the importance of Terraform–Vault integration for secure infrastructure automation.
+
+
+Terraform + Vault Integration Cheat Sheet
+1. Set up Vault
+Launch Ubuntu EC2 instance.
+
+Install Vault:
+
+bash
+sudo apt-get install vault
+Start Vault in dev mode:
+
+bash
+vault server -dev
+Export root token for CLI access.
+
+2. Access Vault UI
+Open http://<EC2-IP>:8200/ui.
+
+Login with root token.
+
+Explore Secret Engines (KV, AWS, Kubernetes, etc.).
+
+3. Create Secrets
+Enable KV secret engine:
+
+bash
+vault secrets enable -path=secret kv
+Add a secret:
+
+bash
+vault kv put secret/app username=admin password=pass123
+4. Configure Policies & Roles
+Create policy file (policy.hcl):
+
+hcl
+path "secret/*" {
+  capabilities = ["read"]
+}
+Apply policy:
+
+bash
+vault policy write terraform policy.hcl
+Enable AppRole auth:
+
+bash
+vault auth enable approle
+Create role:
+
+bash
+vault write auth/approle/role/terraform policies="terraform"
+Fetch RoleID & SecretID:
+
+bash
+vault read auth/approle/role/terraform/role-id
+vault write -f auth/approle/role/terraform/secret-id
+5. Terraform Integration
+Add Vault provider to Terraform config:
+
+hcl
+provider "vault" {
+  address = "http://<EC2-IP>:8200"
+  auth_login {
+    path = "auth/approle/login"
+    parameters = {
+      role_id   = "<ROLE_ID>"
+      secret_id = "<SECRET_ID>"
+    }
+  }
+}
+Read secret in Terraform:
+
+hcl
+data "vault_kv_secret_v2" "app" {
+  path = "secret/app"
+}
+
+resource "aws_instance" "example" {
+  ami           = "ami-123456"
+  instance_type = "t2.micro"
+  tags = {
+    Name = data.vault_kv_secret_v2.app.data["username"]
+  }
+}
+6. Validate
+Run terraform init && terraform apply.
+
+Confirm EC2 instance is tagged with Vault secret.
